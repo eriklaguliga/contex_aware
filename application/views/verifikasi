@@ -1,0 +1,21 @@
+<html>
+
+<body>
+
+<form id="form1" name="form1" method="post" > 
+	<p>Sms berisi kode verifikasi telah dikirimkan</p>
+	<p>silahkan memasukkan kode verifikasi anda</p>
+	<p>Kode:
+		<input type="text" name="kode" id="kode">
+
+		
+	</p>
+
+	<P>
+		<input type="submit" name="button" id="button" value="submit">
+	</P>
+</form>
+
+
+</body>
+</html>	
