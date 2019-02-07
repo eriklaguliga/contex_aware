@@ -2,7 +2,7 @@
 
 <body>
 <?php
-echo $otp;
+echo $kode_asli;
 ?>
 <p>gagal tjuy</p>
 

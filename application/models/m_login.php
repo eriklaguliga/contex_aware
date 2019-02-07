@@ -27,6 +27,11 @@ class M_login extends CI_Model
         return $this->db->get("boss_name");
     }
 
+    function cek_otp($otp){
+        $this->db->where("otp_kode",$otp);
+        return $this->db->get("otp_history");
+    }
+
     function cek_level_3(){
         $query = $this->db->query("SELECT login_time FROM history_login ORDER BY id DESC LIMIT 1");
         $result = $query->result_array();
@@ -40,6 +45,19 @@ class M_login extends CI_Model
         }
 
         return $id;
+    }
+
+    public function saveOTP($otp){
+        {
+            $this->db->insert("otp_history",$otp);
+            $id = $this->db->insert_id();
+        }
+        return $id;
+
+    }
+
+    public function last_record(){
+        
     }
     
     //Disini akan mengambil data context dari database    

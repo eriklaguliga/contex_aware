@@ -4,7 +4,8 @@ require 'geo.php';
 
 class Login extends CI_Controller
 {
-    public $kode_asli;
+    private $kode_asli;
+    // public $nilai;
     function get_lokasi(){
         $ip = file_get_contents('https://api.ipify.org');
         $geo = new geo;
@@ -59,6 +60,7 @@ class Login extends CI_Controller
                     $sess_data['longtitude'] = $qad->longtitude;
                     $sess_data['waktu_awal'] = $qad->waktu_awal;
                     $sess_data['waktu_akhir'] = $qad->waktu_akhir;
+                    $sess_data['kota'] = $qad->kota;
                     $this->session->set_userdata($sess_data);
                 }
                 //mengambil score di database
@@ -85,7 +87,7 @@ class Login extends CI_Controller
                 $lat = $arr_location ->lat;
                 $lon = $arr_location ->lon;
                 $city =$arr_location ->city;
-
+                //perbandingan hari dan waktu
                 if(($hari == 'Mon') or ($hari == 'Tue') or ($hari == 'Wed') or ($hari == 'Thu') or ($hari == 'Fri')){
                     $nilai = $nilai + $score_calender;
                     if(($time > $this->session->userdata('waktu_awal')) and ($time < $this->session->userdata('waktu_akhir'))){
@@ -97,8 +99,8 @@ class Login extends CI_Controller
                     $nilai =  $nilai + 0;
                     // $activity = $activity + 0 ;
                 } 
-
-                if(($this->session->userdata('latitude')==$lat) and ($this->session->userdata('longtitude')==$lon)){
+                //membandingkan lokasi pengguna 
+                if(($this->session->userdata('latitude')==$lat) and ($this->session->userdata('longtitude')==$lon) or ($this->session->userdata('kota') == $city) ){
                     $nilai = $nilai + $score_lokasi;
                 }else{
                     $nilai = $nilai + 0;
@@ -107,9 +109,12 @@ class Login extends CI_Controller
                 $email = $this->session->userdata('email');
                 $data['nilai'] = $nilai;
 
+                //klasifikasi level                                        
                 //level 0
                 if($nilai == $level_1){
-                     $this-> load -> view('berhasil_log',$data);
+                    $this->save_data($email,$city,$time);
+                    $this->load->view('berhasil_log',$data);
+                     
 
                 }
                 //level 1
@@ -121,13 +126,14 @@ class Login extends CI_Controller
                 }
                 //level2
                 if(($nilai < $level_2) and ($nilai >= $level_3 )){
+                    $this->save_data($email,$city,$time);
                     $userkey = "w2cou5"; 
                     $passkey = "telkommen13"; 
                     $telepon = "081324424499";
                     $kode = rand(1000,10000);
                     $kode_sementara = $kode;
                     $kode_asli = (string) $kode;
-
+                    $this->save_otp($kode_asli);
                     $message = "<kode> $kode_sementara";
                     $url = "https://reguler.zenziva.net/apps/smsapi.php";
                     $curlHandle = curl_init();
@@ -149,7 +155,8 @@ class Login extends CI_Controller
                 }
 
                 if(($nilai < $level_3) and ($nilai>= $level_4)){
-
+                    $this->load->view('level_3');
+                    $this->save_data($email,$city,$time);
                 }
 
             } else {
@@ -169,8 +176,9 @@ class Login extends CI_Controller
     function level_1(){
         $boss =$this->input->post('boss');
         $cek_boss = $this->m_login->cek_level_1($boss);
+        $data['nilai'] = $this->nilai;
         if ($cek_boss->num_rows() > 0){
-            $this->load->view('berhasil_log.php');
+            $this->load->view('berhasil_log',$data);
         }else{
             $this->load->view('login.php');
         }
@@ -179,10 +187,11 @@ class Login extends CI_Controller
     }
     function level_2_(){
         $otp = $this->input->post('otp');
-        if($otp != $this->kode_asli){
+        $cek_otp = $this->m_login->cek_otp($otp);
+        if($cek_otp->num_rows()> 0 ){
             $this->load->view('berhasil_log');
         }else{
-            $this-> load -> view('gagal');
+            $this-> load -> view('gagal',$this->kode_asli);
         }
     }
 
@@ -204,17 +213,45 @@ class Login extends CI_Controller
     }
 
     function level_3_cek(){
-        $waktu =$this->input->post('waktu');
-        $database = $this->m_login->cek_level_3();
-        
-        if($waktu == $database){
-            $this->load->view('berhasil log');
+        $this->load->database();
+        $last_row = $this->db->order_by('id',"DESC")
+            ->limit(1)
+            ->get('history_login')
+            ->row();
+            $waktu_user = $last_row->login_time;
+        $waktu =$this->input->post('time');
+        $hasil = $this->validasi_waktu($waktu_user);
+
+        if($waktu == $hasil){
+            $this->load -> view('berhasil_log');
         }else{
             $this->load->view('gagal');
         }
-
     }
 
+    function validasi_waktu($database){
+        $pagi = '00:00:00';
+        $siang = '12:00:00';
+        $sore  = '18:00:00';
+        $malam = '23:00:00';
+        
+        if((date('H:i:s',strtotime($pagi)) < $database ) and (date('H:i:s',strtotime($siang)) > $database )){
+            $results = "pagi";
+        }
+        elseif((date('H:i:s',strtotime($siang)) < $database ) and (date('H:i:s',strtotime($sore)) > $database )){
+            $results = "sore";
+        }
+        elseif((date('H:i:s',strtotime($sore)) < $database ) and (date('H:i:s',strtotime($malam)) > $database )){
+            $results = "malam";
+        }
+        return $results;
+    } 
+    function save_otp($otp){
+        $ArrData = array(
+            'otp_kode'=>$otp
+        );
+        $this->m_login->saveOTP($ArrData);
+    }
 
     function save_data($email,$city,$time){
         
@@ -237,8 +274,27 @@ class Login extends CI_Controller
     function level_2 (){
         $this-> load -> view('level_2.php');
     }
-    // function level_3 (){
-    //     $this-> load -> view('level_3.php');
-    // }
+
+    function otp($message){
+        $userkey = "w2cou5"; 
+        $passkey = "telkommen13"; 
+        $telepon = "081324424499";
+        $url = "https://reguler.zenziva.net/apps/smsapi.php";
+        $curlHandle = curl_init();
+        curl_setopt($curlHandle, CURLOPT_URL, $url);
+        curl_setopt($curlHandle, CURLOPT_POSTFIELDS,  'userkey='.$userkey.'&passkey='.$passkey.'&nohp='.$telepon.'&pesan='.urlencode($message));
+        curl_setopt($curlHandle, CURLOPT_HEADER, 0);
+        curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curlHandle, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_setopt($curlHandle, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($curlHandle, CURLOPT_TIMEOUT,30);
+        curl_setopt($curlHandle, CURLOPT_POST, 1);
+        $results = curl_exec($curlHandle);
+        curl_close($curlHandle);
+
+        $XMLdata = new SimpleXMLElement($results);
+        $status = $XMLdata->message[0]->text;
+        echo $status;
+    }
 
 }

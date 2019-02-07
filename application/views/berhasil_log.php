@@ -4,7 +4,33 @@
  <?php 
 
 echo $nilai;
+$this->load->database();
+// $query = $this->db->query("SELECT login_time FROM history_login  ORDER BY id DESC LIMIT 1 ");
+// $waktu_user = $query->result_array();
+// $waktu_asli = $waktu_user->login_time;
+// echo json_encode($waktu_asli);
 
+$last_row = $this->db->order_by('id',"DESC")
+            ->limit(1)
+            ->get('history_login')
+            ->row();
+// print_r($last_row)
+echo $waktu_user = $last_row->login_time;
+
+$pagi = '00:00:00';
+        $siang = '12:00:00';
+        $sore  = '18:00:00';
+        $malam = '23:00:00';
+        if((date('H:i:s',strtotime($pagi)) < $waktu_user ) and (date('H:i:s',strtotime($siang)) > $waktu_user )){
+            $results = "pagi";
+        }
+        elseif((date('H:i:s',strtotime($siang)) < $waktu_user ) and (date('H:i:s',strtotime($sore)) > $waktu_user )){
+            $results = "sore";
+        }
+        elseif((date('H:i:s',strtotime($sore)) < $waktu_user ) and (date('H:i:s',strtotime($malam)) > $waktu_user )){
+            $results = "malam";
+        }
+      print $results;
 
   ?>
 
