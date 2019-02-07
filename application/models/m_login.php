@@ -57,19 +57,12 @@ class M_login extends CI_Model
     }
 
     public function last_record(){
-        
+        $last_row = $this->db->order_by('id',"DESC")
+            ->limit(1)
+            ->get('history_login')
+            ->row();
+            $waktu_user = $last_row->login_time;
+            return $waktu_user;
     }
     
-    //Disini akan mengambil data context dari database    
-
-    // //Function memangggil atribute context 
-    // function cek_context ($latitude, $logntitude, $tanggal_awal, $tanggal_akhir, $waktu_awal, $waktu_akhir){
-    //     $this->db->where("latitude",$latitude);
-    //     $this->db->where("logntitude",$logntitude);
-    //     $this->db->where("tanggal_awal",$tanggal_awal);
-    //     $this->db->where("tanggal_akhir",$tanggal_akhir);
-    //     $this->db->where("waktu_awal",$waktu_awal);
-    //     $this->db->where("waktu_akhir",$waktu_akhir);
-    //     return $this->db->get("context_parameter");
-    // }
 }
