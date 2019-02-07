@@ -36,7 +36,7 @@
 					</span>
 
 					<div class="wrap-input100 validate-input m-b-16" data-validate="Please enter your last login time">
-						<input class="input100" type="text" name="time" placeholder="Please enter your last login time">
+						<input class="input100" type="text" name="time" placeholder="contoh input pagi/siang/sore/malam">
 						<span class="focus-input100"></span>
 					</div>
 
