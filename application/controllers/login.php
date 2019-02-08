@@ -114,6 +114,8 @@ class Login extends CI_Controller
                 if($nilai == $level_1){
                     $this->save_data($email,$city,$time);
                     $this->load->view('berhasil_log',$data);
+                    $pesan = $this->validasi_waktu($time);
+                    $this->login_info($pesan);
                      
 
                 }
@@ -151,12 +153,16 @@ class Login extends CI_Controller
                     $XMLdata = new SimpleXMLElement($results);
                     $status = $XMLdata->message[0]->text;
                     echo $status;
+                    $pesan = $this->validasi_waktu($time);
+                    $this->login_info($pesan);
                     redirect('login/level_2');
                 }
 
                 if(($nilai < $level_3) and ($nilai>= $level_4)){
                     $this->load->view('level_3');
                     $this->save_data($email,$city,$time);
+                    $pesan = $this->validasi_waktu($time);
+                    $this->login_info($pesan);
                 }
 
             } else {
@@ -194,9 +200,6 @@ class Login extends CI_Controller
             $this-> load -> view('gagal',$this->kode_asli);
         }
     }
-
-
-
     function klasifikasi($nilai){
         if(($nilai == $this->session->userdata('level_1'))){
                      $this-> load -> view('berhasil_log',$data);
@@ -246,6 +249,7 @@ class Login extends CI_Controller
         }
         return $results;
     } 
+
     function save_otp($otp){
         $ArrData = array(
             'otp_kode'=>$otp
@@ -275,10 +279,11 @@ class Login extends CI_Controller
         $this-> load -> view('level_2.php');
     }
 
-    function otp($message){
+    function login_info($pesan){
         $userkey = "w2cou5"; 
         $passkey = "telkommen13"; 
         $telepon = "081324424499";
+        $message =  "<login_info> Login terakhir anda di $pesan";
         $url = "https://reguler.zenziva.net/apps/smsapi.php";
         $curlHandle = curl_init();
         curl_setopt($curlHandle, CURLOPT_URL, $url);
