@@ -161,7 +161,7 @@ class Login extends CI_Controller
             $this->load->view('login.php');
         }
     }
-    
+
     function level_2_(){
         $otp = $this->input->post('otp');
         $cek_otp = $this->m_login->cek_otp($otp);
@@ -239,10 +239,6 @@ class Login extends CI_Controller
                                          'login_time'=>$time
                                 );
                 $this->m_login->saveHistory($ArrData);
-    }
-
-
-    function berhasil_log($nilai){
     }
 
     function gagal_load(){
