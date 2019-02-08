@@ -121,7 +121,7 @@ class Login extends CI_Controller
                 }
                 //level 1
                 if(($nilai < $level_1) and ($nilai >= $level_2)){
-                     // $this-> load -> view('berhasil_log',$data);
+                    $this->save_data($email,$city,$time);
                     $this->load->view('level_1');
 
 
@@ -129,32 +129,7 @@ class Login extends CI_Controller
                 //level2
                 if(($nilai < $level_2) and ($nilai >= $level_3 )){
                     $this->save_data($email,$city,$time);
-                    $userkey = "w2cou5"; 
-                    $passkey = "telkommen13"; 
-                    $telepon = "081324424499";
-                    $kode = rand(1000,10000);
-                    $kode_sementara = $kode;
-                    $kode_asli = (string) $kode;
-                    $this->save_otp($kode_asli);
-                    $message = "<kode> $kode_sementara";
-                    $url = "https://reguler.zenziva.net/apps/smsapi.php";
-                    $curlHandle = curl_init();
-                    curl_setopt($curlHandle, CURLOPT_URL, $url);
-                    curl_setopt($curlHandle, CURLOPT_POSTFIELDS,  'userkey='.$userkey.'&passkey='.$passkey.'&nohp='.$telepon.'&pesan='.urlencode($message));
-                    curl_setopt($curlHandle, CURLOPT_HEADER, 0);
-                    curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, 1);
-                    curl_setopt($curlHandle, CURLOPT_SSL_VERIFYHOST, 2);
-                    curl_setopt($curlHandle, CURLOPT_SSL_VERIFYPEER, 0);
-                    curl_setopt($curlHandle, CURLOPT_TIMEOUT,30);
-                    curl_setopt($curlHandle, CURLOPT_POST, 1);
-                    $results = curl_exec($curlHandle);
-                    curl_close($curlHandle);
-
-                    $XMLdata = new SimpleXMLElement($results);
-                    $status = $XMLdata->message[0]->text;
-                    echo $status;
-                    $pesan = $this->validasi_waktu($time);
-                    $this->login_info($pesan);
+                    $this->otp();
                     redirect('login/level_2');
                 }
 
@@ -284,6 +259,33 @@ class Login extends CI_Controller
         $passkey = "telkommen13"; 
         $telepon = "081324424499";
         $message =  "<login_info> Login terakhir anda di $pesan";
+        $url = "https://reguler.zenziva.net/apps/smsapi.php";
+        $curlHandle = curl_init();
+        curl_setopt($curlHandle, CURLOPT_URL, $url);
+        curl_setopt($curlHandle, CURLOPT_POSTFIELDS,  'userkey='.$userkey.'&passkey='.$passkey.'&nohp='.$telepon.'&pesan='.urlencode($message));
+        curl_setopt($curlHandle, CURLOPT_HEADER, 0);
+        curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curlHandle, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_setopt($curlHandle, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($curlHandle, CURLOPT_TIMEOUT,30);
+        curl_setopt($curlHandle, CURLOPT_POST, 1);
+        $results = curl_exec($curlHandle);
+        curl_close($curlHandle);
+
+        $XMLdata = new SimpleXMLElement($results);
+        $status = $XMLdata->message[0]->text;
+        echo $status;
+    }
+
+    function otp(){
+        $userkey = "w2cou5"; 
+        $passkey = "telkommen13"; 
+        $telepon = "081324424499";
+        $kode = rand(1000,10000);
+        $kode_sementara = $kode;
+        $kode_asli = (string) $kode;
+        $this->save_otp($kode_asli);
+        $message = "<kode> $kode_sementara";
         $url = "https://reguler.zenziva.net/apps/smsapi.php";
         $curlHandle = curl_init();
         curl_setopt($curlHandle, CURLOPT_URL, $url);
