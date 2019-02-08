@@ -45,30 +45,11 @@
 						<span class="focus-input100"></span>
 					</div>
 
-					<div class="text-right p-t-13 p-b-23">
-						<span class="txt1">
-							Forgot
-						</span>
-
-						<a href="#" class="txt2">
-							Username / Password?
-						</a>
-					</div>
 
 					<div class="container-login100-form-btn">
 						<button class="login100-form-btn" name="mysubmit">
 							Sign in
 						</button>
-					</div>
-
-					<div class="flex-col-c p-t-170 p-b-40">
-						<span class="txt1 p-b-9">
-							Don’t have an account?
-						</span>
-
-						<a href="#" class="txt3">
-							Sign up now
-						</a>
 					</div>
 				</form>
 			</div>

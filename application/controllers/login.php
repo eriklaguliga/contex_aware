@@ -116,15 +116,12 @@ class Login extends CI_Controller
                     $this->load->view('berhasil_log',$data);
                     $pesan = $this->validasi_waktu($time);
                     $this->login_info($pesan);
-                     
 
                 }
                 //level 1
                 if(($nilai < $level_1) and ($nilai >= $level_2)){
                     $this->save_data($email,$city,$time);
                     $this->load->view('level_1');
-
-
                 }
                 //level2
                 if(($nilai < $level_2) and ($nilai >= $level_3 )){
