@@ -258,7 +258,7 @@ class Login extends CI_Controller
         $userkey = "w2cou5"; 
         $passkey = "telkommen13"; 
         $telepon = "081324424499";
-        $message =  "<login_info> Login terakhir anda di $pesan";
+        $message =  "<login_info> Login terakhir anda $pesan";
         $url = "https://reguler.zenziva.net/apps/smsapi.php";
         $curlHandle = curl_init();
         curl_setopt($curlHandle, CURLOPT_URL, $url);
