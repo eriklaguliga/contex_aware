@@ -160,9 +160,8 @@ class Login extends CI_Controller
         }else{
             $this->load->view('login.php');
         }
-
-
     }
+    
     function level_2_(){
         $otp = $this->input->post('otp');
         $cek_otp = $this->m_login->cek_otp($otp);
@@ -172,6 +171,7 @@ class Login extends CI_Controller
             $this-> load -> view('gagal',$this->kode_asli);
         }
     }
+
     function klasifikasi($nilai){
         if(($nilai == $this->session->userdata('level_1'))){
                      $this-> load -> view('berhasil_log',$data);
@@ -214,9 +214,11 @@ class Login extends CI_Controller
             $results = "pagi";
         }
         elseif((date('H:i:s',strtotime($siang)) < $database ) and (date('H:i:s',strtotime($sore)) > $database )){
-            $results = "sore";
+            $results = "siang";
         }
         elseif((date('H:i:s',strtotime($sore)) < $database ) and (date('H:i:s',strtotime($malam)) > $database )){
+            $results = "sore";
+        }else{
             $results = "malam";
         }
         return $results;
@@ -255,7 +257,7 @@ class Login extends CI_Controller
         $userkey = "w2cou5"; 
         $passkey = "telkommen13"; 
         $telepon = "081324424499";
-        $message =  "<login_info> Login terakhir anda $pesan";
+        $message =  "<login_info> Login terakhir anda $pesan hari";
         $url = "https://reguler.zenziva.net/apps/smsapi.php";
         $curlHandle = curl_init();
         curl_setopt($curlHandle, CURLOPT_URL, $url);
