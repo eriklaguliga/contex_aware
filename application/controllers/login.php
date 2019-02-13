@@ -5,29 +5,8 @@ require 'geo.php';
 class Login extends CI_Controller
 {
     private $kode_asli;
+    private $data;
     // public $nilai;
-    function get_lokasi(){
-        $ip = file_get_contents('https://api.ipify.org');
-        $geo = new geo;
-        $geo->request($ip);
-        $geo->lat;
-        $geo->lon;
-
-       
-    }
-
-    function get_waktu(){
-        //function untuk mendapatkan waktu
-        $time = date('H:i:s');
-        return $time;
-    }
-
-    function get_calendar(){
-        //function untuk mendapatkan info kalender
-        $date = date('y-m-d');
-        return $date;
-    }
-
     function __construct()
     {
         parent::__construct();
@@ -37,7 +16,6 @@ class Login extends CI_Controller
      function index() {
         $this->load->view('nimda/login');
     }
-
 
     function cek_login() {
             $nilai = 0;
@@ -146,7 +124,6 @@ class Login extends CI_Controller
 
 
     function logout() {
-        $this-> load -> view('level_3');
         $this->session->sess_destroy();
         redirect('keluar');
     }
@@ -189,11 +166,7 @@ class Login extends CI_Controller
 
     function level_3_cek(){
         $this->load->database();
-        $last_row = $this->db->order_by('id',"DESC")
-            ->limit(1)
-            ->get('history_login')
-            ->row();
-            $waktu_user = $last_row->login_time;
+        $waktu_user = $this->m_login->last_record();
         $waktu =$this->input->post('time');
         $hasil = $this->validasi_waktu($waktu_user);
 
