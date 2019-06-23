@@ -3,7 +3,7 @@
 <body>
  <?php 
 
-echo $nilai;
+
 $this->load->database();
 // $query = $this->db->query("SELECT login_time FROM history_login  ORDER BY id DESC LIMIT 1 ");
 // $waktu_user = $query->result_array();
@@ -15,7 +15,7 @@ $last_row = $this->db->order_by('id',"DESC")
             ->get('history_login')
             ->row();
 // print_r($last_row)
-echo $waktu_user = $last_row->login_time;
+ $waktu_user = $last_row->login_time;
 
 $pagi = '00:00:00';
         $siang = '12:00:00';
@@ -30,11 +30,25 @@ $pagi = '00:00:00';
         elseif((date('H:i:s',strtotime($sore)) < $waktu_user ) and (date('H:i:s',strtotime($malam)) > $waktu_user )){
             $results = "malam";
         }
-      print $results;
+        // date_default_timezone_set('UTC'); //bagaimana caranya dikasih automatic 
+        //         $hari = date ("D");
+        //         $time = date('H:i:s');
+    
+        date_default_timezone_set('Asia/Jakarta');
+    // $waktu = '07:00:00';
+    // $data  = date('H:i:s');
+    // $time =  date ("D");
+    // echo $data;
+    // echo $time;
+
+    //   print $data['nilai'];
+    //   echo $data['nilai'];
+      print $this->session->userdata('nilai');
+      
 
   ?>
 
-<p><?php echo $this->session->userdata('email'); ?></p>
+
 
 
 </body>

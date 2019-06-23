@@ -32,7 +32,7 @@
 			<div class="wrap-login100">
 				<form class="login100-form validate-form p-l-55 p-r-55 p-t-178" action="<?php echo base_url();?>index.php/login/level_1" method="post">
 					<span class="login100-form-title">
-						Level 1
+						Level 1 (Security Question About Your Company)
 					</span>
 
 					<div class="wrap-input100 validate-input m-b-16" data-validate="Please enter your boss name">

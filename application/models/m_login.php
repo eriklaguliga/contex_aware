@@ -21,9 +21,11 @@ class M_login extends CI_Model
         $this->db->where("email",$email);
         return $this->db->get("klasifikasi_level");
     }
+    
+
 
     function cek_level_1($nama){
-        $this->db->where("nama",$nama);
+        $this->db->where("boss_name",$nama);
         return $this->db->get("boss_name");
     }
 
@@ -37,6 +39,7 @@ class M_login extends CI_Model
         $result = $query->result_array();
         return $result;
     }
+    
     public function saveHistory($data)
     {
         {

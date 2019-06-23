@@ -78,41 +78,44 @@ class Login extends CI_Controller
                     // $activity = $activity + 0 ;
                 } 
                 //membandingkan lokasi pengguna 
-                if(($this->session->userdata('latitude')==$lat) and ($this->session->userdata('longtitude')==$lon) or ($this->session->userdata('kota') == $city) ){
+                if(($this->session->userdata('latitude')==$lat) and ($this->session->userdata('longtitude')==$lon)){
                     $nilai = $nilai + $score_lokasi;
                 }else{
                     $nilai = $nilai + 0;
                 }
+                $sess_data['nilai'] = $nilai;
+            $this->session->set_userdata($sess_data);
 
                 $email = $this->session->userdata('email');
-                $data['nilai'] = $nilai;
+                // $data['nilai'] = $nilai;
 
                 //klasifikasi level                                        
                 //level 0
                 if($nilai == $level_1){
                     $this->save_data($email,$city,$time);
-                    $this->load->view('berhasil_log',$data);
+                    $this->load->view('berhasil_log');
                     $pesan = $this->validasi_waktu($time);
                     $this->login_info($pesan);
 
                 }
                 //level 1
                 if(($nilai < $level_1) and ($nilai >= $level_2)){
+                    
                     $this->save_data($email,$city,$time);
                     $this->load->view('level_1');
+                    $pesan = $this->validasi_waktu($time);
+                    $this->login_info($pesan);
                 }
                 //level2
                 if(($nilai < $level_2) and ($nilai >= $level_3 )){
-                    $this->save_data($email,$city,$time);
+                    // $this->save_data($email,$city,$time);
                     $this->otp();
                     redirect('login/level_2');
                 }
 
                 if(($nilai < $level_3) and ($nilai>= $level_4)){
                     $this->load->view('level_3');
-                    $this->save_data($email,$city,$time);
-                    $pesan = $this->validasi_waktu($time);
-                    $this->login_info($pesan);
+                    // $this->load -> view('berhasil_log');
                 }
 
             } else {
@@ -120,6 +123,7 @@ class Login extends CI_Controller
                 redirect('login/gagal_load ');
                 $nilai = 0;
             }
+            
     }
 
 
@@ -131,7 +135,7 @@ class Login extends CI_Controller
     function level_1(){
         $boss =$this->input->post('boss');
         $cek_boss = $this->m_login->cek_level_1($boss);
-        $data['nilai'] = $this->nilai;
+        // $data['nilai'] = $this->nilai;
         if ($cek_boss->num_rows() > 0){
             $this->load->view('berhasil_log',$data);
         }else{
@@ -143,6 +147,17 @@ class Login extends CI_Controller
         $otp = $this->input->post('otp');
         $cek_otp = $this->m_login->cek_otp($otp);
         if($cek_otp->num_rows()> 0 ){
+            $email = $this->session->userdata('email');
+            $ip = file_get_contents('https://api.ipify.org');
+            $arr_location =file_get_contents ('http://ip-api.com/json/'.$ip);
+            $arr_location = json_decode($arr_location);
+            $city =$arr_location ->city;
+            date_default_timezone_set('Asia/Jakarta'); 
+            $time = date('H:i:s');
+            $this->save_data($email,$city,$time);
+            $pesan = $this->validasi_waktu($time);
+            $this->login_info($pesan);
+            $this->load -> view('berhasil_log');
             $this->load->view('berhasil_log');
         }else{
             $this-> load -> view('gagal',$this->kode_asli);
@@ -171,7 +186,18 @@ class Login extends CI_Controller
         $hasil = $this->validasi_waktu($waktu_user);
 
         if($waktu == $hasil){
+            $email = $this->session->userdata('email');
+            $ip = file_get_contents('https://api.ipify.org');
+            $arr_location =file_get_contents ('http://ip-api.com/json/'.$ip);
+            $arr_location = json_decode($arr_location);
+            $city =$arr_location ->city;
+            date_default_timezone_set('Asia/Jakarta'); 
+            $time = date('H:i:s');
+            $this->save_data($email,$city,$time);
+            $pesan = $this->validasi_waktu($time);
+            $this->login_info($pesan);
             $this->load -> view('berhasil_log');
+            
         }else{
             $this->load->view('gagal');
         }
