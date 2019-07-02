@@ -36,7 +36,13 @@
 					</span>
 
 					<div class="wrap-input100 validate-input m-b-16" data-validate="Please enter your last login time">
-						<input class="input100" type="text" name="time" placeholder="contoh input pagi/siang/sore/malam">
+					<select id="approval" name="time" class="form-control">
+                              
+                              <option value="pagi" > pagi </option>
+                              <option value="siang" > siang </option>
+                              <option value="sore" > sore </option>
+							  <option value="malam" > malam </option>
+                           </select>
 						<span class="focus-input100"></span>
 					</div>
 

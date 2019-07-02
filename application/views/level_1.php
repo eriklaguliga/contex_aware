@@ -26,6 +26,9 @@
 <!--===============================================================================================-->
 </head>
 <body>
+
+<?php $this->load->database(); 
+$query = $this->db->query("SELECT nama_boss FROM boss_list");?>
 	
 	<div class="limiter">
 		<div class="container-login100">
@@ -36,7 +39,12 @@
 					</span>
 
 					<div class="wrap-input100 validate-input m-b-16" data-validate="Please enter your boss name">
-						<input class="input100" type="text" name="boss" placeholder="Please enter your boss name">
+					<select id="approval" name="boss" class="form-control">
+						<?php foreach($query->result_array() as $row){
+								$nama_boss = $row['nama_boss'];
+    							echo "<option value='$nama_boss'>$nama_boss</option>";
+						}?>
+                           </select>
 						<span class="focus-input100"></span>
 					</div>
 

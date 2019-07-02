@@ -26,6 +26,7 @@ class Login extends CI_Controller
             $cek = $this->m_login->cek($email, $password);
             $cek_context = $this->m_login->score_data($email);
             $cek_level = $this->m_login->level($email);
+            $ambil_bos = $this->m_login->ambil_level3($email);
             if ($cek->num_rows() > 0) {
                 //login berhasil, buat session
 
@@ -39,6 +40,7 @@ class Login extends CI_Controller
                     $sess_data['waktu_awal'] = $qad->waktu_awal;
                     $sess_data['waktu_akhir'] = $qad->waktu_akhir;
                     $sess_data['kota'] = $qad->kota;
+                    $sess_data['boss_name'] = $qad->boss_name;
                     $this->session->set_userdata($sess_data);
                 }
                 //mengambil score di database
@@ -54,6 +56,10 @@ class Login extends CI_Controller
                     $level_3 = $ta1->level_3;
                     $level_4 = $ta1->level_4;
                 }
+                foreach($ambil_bos->result() as $bos){
+                    $sess_data['boss_name'] = $bos->boss_name;
+                }
+                $this->session->set_userdata($sess_data);
                 $nilai = $score_identity;
                 date_default_timezone_set('Asia/Jakarta'); //bagaimana caranya dikasih automatic 
                 $hari = date ("D");
@@ -111,6 +117,7 @@ class Login extends CI_Controller
                     // $this->save_data($email,$city,$time);
                     $this->otp();
                     redirect('login/level_2');
+                    // $this->load->view('level_1');
                 }
 
                 if(($nilai < $level_3) and ($nilai>= $level_4)){
@@ -136,12 +143,16 @@ class Login extends CI_Controller
         $boss =$this->input->post('boss');
         $cek_boss = $this->m_login->cek_level_1($boss);
         // $data['nilai'] = $this->nilai;
-        if ($cek_boss->num_rows() > 0){
-            $this->load->view('berhasil_log',$data);
+        if ($boss = $this->session->userdata('nilai')){
+            $this->load->view('berhasil_log');
         }else{
             $this->load->view('login.php');
         }
     }
+
+    // public function fetch_boss(){
+    //     echo $this->m_login->fetch_boss();
+    // }
 
     function level_2_(){
         $otp = $this->input->post('otp');
@@ -160,7 +171,7 @@ class Login extends CI_Controller
             $this->load -> view('berhasil_log');
             $this->load->view('berhasil_log');
         }else{
-            $this-> load -> view('gagal',$this->kode_asli);
+            $this->load->view('login.php');
         }
     }
 
@@ -206,16 +217,18 @@ class Login extends CI_Controller
     function validasi_waktu($database){
         $pagi = '00:00:00';
         $siang = '12:00:00';
+        $batas_siang = '15:00:00';
         $sore  = '18:00:00';
+        $batas_sore = '18:00:00';
         $malam = '23:00:00';
         
         if((date('H:i:s',strtotime($pagi)) < $database ) and (date('H:i:s',strtotime($siang)) > $database )){
             $results = "pagi";
         }
-        elseif((date('H:i:s',strtotime($siang)) < $database ) and (date('H:i:s',strtotime($sore)) > $database )){
+        elseif((date('H:i:s',strtotime($siang)) < $database ) and (date('H:i:s',strtotime($batas_siang)) > $database )){
             $results = "siang";
         }
-        elseif((date('H:i:s',strtotime($sore)) < $database ) and (date('H:i:s',strtotime($malam)) > $database )){
+        elseif((date('H:i:s',strtotime($batas_siang)) < $database ) and (date('H:i:s',strtotime($sore)) > $database )){
             $results = "sore";
         }else{
             $results = "malam";

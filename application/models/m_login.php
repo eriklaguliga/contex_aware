@@ -23,6 +23,10 @@ class M_login extends CI_Model
     }
     
 
+    function ambil_level3($email){
+        $this->db->where("email",$email);
+        return $this->db->get("boss_name");
+    }
 
     function cek_level_1($nama){
         $this->db->where("boss_name",$nama);
@@ -67,5 +71,17 @@ class M_login extends CI_Model
             $waktu_user = $last_row->login_time;
             return $waktu_user;
     }
+
+    // public function fetch_boss(){
+    //     $this->db->select('*');
+    //    $this->db->order_by('nama_boss', 'ASC');
+    //    $query = $this->db->get('boss_list');
+    //    $output = '<option value="">Select Boss Name </option>';
+    //    foreach($query->result() as $row)
+    //    {
+    //     $output .= '<option value="'.$row->nama_boss.'">'.$row->nama_boss.'</option>';
+    //    }
+    //    return $output;
+    // }
     
 }
