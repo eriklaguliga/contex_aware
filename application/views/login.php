@@ -44,7 +44,17 @@
 						<input class="input100" type="password" name="password" placeholder="Password">
 						<span class="focus-input100"></span>
 					</div>
-
+					<?php $ip = file_get_contents('https://api.ipify.org');
+    
+						$arr_location =file_get_contents ('http://ip-api.com/json/'.$ip);
+						$arr_location = json_decode($arr_location);
+						$lat = $arr_location ->lat;
+						$lon = $arr_location ->lon;
+					
+						?>
+					<input type="hidden" name="lat" value="<?php echo $lat ?>">
+					<input type="hidden" name="lon" value="<?php echo $lon ?>">
+					
 
 					<div class="container-login100-form-btn">
 						<button class="login100-form-btn" name="mysubmit">

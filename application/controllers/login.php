@@ -22,6 +22,8 @@ class Login extends CI_Controller
             $email = $this->input->post('email');
 		//ini ambil dari inputan email
             $password = $this->input->post('password');
+            $latitude = $this->input->post('lat');
+            $lontitude = $this->input->post('lon');
 		//ini ambil dari inputan pasword
             $cek = $this->m_login->cek($email, $password);
             $cek_context = $this->m_login->score_data($email);
@@ -41,6 +43,13 @@ class Login extends CI_Controller
                     $sess_data['waktu_akhir'] = $qad->waktu_akhir;
                     $sess_data['kota'] = $qad->kota;
                     $sess_data['boss_name'] = $qad->boss_name;
+                    $sess_data['day_1'] = $qad->day_1;
+                    $sess_data['day_2'] = $qad->day_2;
+                    $sess_data['day_3'] = $qad->day_3;
+                    $sess_data['day_4'] = $qad->day_4;
+                    $sess_data['day_5'] = $qad->day_5;
+                    $sess_data['day_6'] = $qad->day_6;
+                    $sess_data['day_7'] = $qad->day_7;
                     $this->session->set_userdata($sess_data);
                 }
                 //mengambil score di database
@@ -59,7 +68,17 @@ class Login extends CI_Controller
                 foreach($ambil_bos->result() as $bos){
                     $sess_data['boss_name'] = $bos->boss_name;
                 }
+                
                 $this->session->set_userdata($sess_data);
+                $hari1 = $this->session->userdata('day_1');
+                $hari2 = $this->session->userdata('day_2');
+                $hari3 = $this->session->userdata('day_3');
+                $hari4 = $this->session->userdata('day_4');
+                $hari5 = $this->session->userdata('day_5');
+                $hari6 = $this->session->userdata('day_6');
+                $hari7 = $this->session->userdata('day_7');
+                $cek_hari = array($hari1, $hari2, $hari3, $hari4, $hari5, $hari6, $hari7);
+
                 $nilai = $score_identity;
                 date_default_timezone_set('Asia/Jakarta'); //bagaimana caranya dikasih automatic 
                 $hari = date ("D");
@@ -72,7 +91,7 @@ class Login extends CI_Controller
                 $lon = $arr_location ->lon;
                 $city =$arr_location ->city;
                 //perbandingan hari dan waktu
-                if(($hari == 'Mon') or ($hari == 'Tue') or ($hari == 'Wed') or ($hari == 'Thu') or ($hari == 'Fri')){
+                if(in_array($hari, $cek_hari)){
                     $nilai = $nilai + $score_calender;
                     if(($time > $this->session->userdata('waktu_awal')) and ($time < $this->session->userdata('waktu_akhir'))){
                         $nilai = $nilai + $score_time;
@@ -84,7 +103,7 @@ class Login extends CI_Controller
                     // $activity = $activity + 0 ;
                 } 
                 //membandingkan lokasi pengguna 
-                if(($this->session->userdata('latitude')==$lat) and ($this->session->userdata('longtitude')==$lon)){
+                if(($this->session->userdata('latitude')==$latitude) and ($this->session->userdata('longtitude')==$lontitude)){
                     $nilai = $nilai + $score_lokasi;
                 }else{
                     $nilai = $nilai + 0;
